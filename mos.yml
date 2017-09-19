@@ -11,6 +11,7 @@ filesystem:
 
 libs:
   - origin: https://github.com/mongoose-os-libs/ca-bundle
+  - origin: https://github.com/mongoose-os-libs/dns-sd
   - origin: https://github.com/mongoose-os-libs/http-server
   - origin: https://github.com/mongoose-os-libs/rpc-service-config
   - origin: https://github.com/mongoose-os-libs/rpc-service-fs
@@ -20,5 +21,9 @@ libs:
 tags:
   - c
   - wifi
+
+config_schema:
+  - ["dns_sd.host_name", "door"]
+
 
 manifest_version: 2017-05-18
