@@ -19,3 +19,8 @@ mos flash && mos console
 ```
 mos config-set door.enable="false"
 ```
+### How to run integration tests: 
+with ESP8266 connected to USB:
+```
+./integration_tests.py 
+```
