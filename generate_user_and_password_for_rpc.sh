@@ -1,10 +1,12 @@
-USER="esteban"
+USER=$1
 REALM="admin"
-PASSWORD="holu"
+PASSWORD=$2
+
+echo user:$USER password:$PASSWORD
 htdigest=$(echo -n "$USER:$REALM:" && echo -n "$USER:$REALM:$PASSWORD" | md5sum) 
 echo ${htdigest} | cut -d' ' -f1 > rpc_auth
 
-echo '[\n {"method": "*", "acl": "+'$USER'"},\n]' > rpc_acl
+echo '[{"method": "*", "acl": "+'$USER'"},]' > rpc_acl
 
 mos put rpc_auth
 mos put rpc_acl
