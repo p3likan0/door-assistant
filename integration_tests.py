@@ -14,6 +14,7 @@ RPC_CRED = 'mos --rpc-creds "{}:{}"'
 GET_CONF = "call Config.Get"
 SET_CONF = "config-set"
 ENABLE_DOOR = "door.enable=true"
+DISABLE_DOOR = "door.enable=false"
 
 
 class TestStringMethods(unittest.TestCase):
@@ -42,6 +43,24 @@ class TestStringMethods(unittest.TestCase):
         p = subprocess.Popen(args)
         exit_code = p.wait()
         self.assertEqual(exit_code, 0)
+
+    def test_disable_door(self):
+        args = shlex.split((RPC_CRED).format(USER, PASSWORD))
+        args += shlex.split(SET_CONF)
+        args += shlex.split(DISABLE_DOOR)
+        p = subprocess.Popen(args)
+        exit_code = p.wait()
+        self.assertEqual(exit_code, 0)
+        sleep(3)
+
+        args = shlex.split((RPC_CRED).format(USER, PASSWORD))
+        args += shlex.split(GET_CONF)
+        args.append(json.dumps({"key": "door.enable"}))
+        p = subprocess.Popen(args, stdout=subprocess.PIPE)
+        exit_code = p.wait()
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(p.stdout.read().decode('utf-8').rstrip(), "false")
+        p.stdout.close()
 
     def test_enable_door(self):
         args = shlex.split((RPC_CRED).format(USER, PASSWORD))
