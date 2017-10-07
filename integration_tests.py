@@ -23,31 +23,40 @@ OPEN_DOOR = "call Door.Open"
 RPC_ADD_USER = "call RPC.Add_user "
 
 
+def build_firmware():
+    args = shlex.split(BUILD)
+    p = subprocess.Popen(args)
+    exit_code = p.wait()
+    assert exit_code == 0
+
+
+def flash_firmware():
+    args = shlex.split(FLASH)
+    p = subprocess.Popen(args)
+    exit_code = p.wait()
+    assert exit_code == 0
+    sleep(3)
+
+
+def bootstrap_rpc_user_and_password():
+    args = shlex.split(GEN_PASS_RPC.format(USER_1, PASSWORD_1))
+    p = subprocess.Popen(args)
+    p.wait()  # mongoose bug, output its error when load credentials.
+
+
 class TestStringMethods(unittest.TestCase):
-    def test_build(self):
-        args = shlex.split(BUILD)
-        p = subprocess.Popen(args)
-        exit_code = p.wait()
-        self.assertEqual(exit_code, 0)
-
-    def test_flash(self):
-        args = shlex.split(FLASH)
-        p = subprocess.Popen(args)
-        exit_code = p.wait()
-        self.assertEqual(exit_code, 0)
-        sleep(3)
-
-    def test_should_generate_rpc_user_and_password(self):
-        args = shlex.split(GEN_PASS_RPC.format(USER_1, PASSWORD_1))
-        p = subprocess.Popen(args)
-        p.wait()  # mongoose bug, output its error when load credentials.
+    @classmethod
+    def setUpClass(cls):
+        build_firmware()
+        flash_firmware()
+        bootstrap_rpc_user_and_password()
 
     def test_should_get_config_when_credentials_are_valid(self):
         args = shlex.split((RPC_CRED).format(USER_1, PASSWORD_1))
         args += shlex.split(GET_CONF)
         p = subprocess.Popen(args)
         exit_code = p.wait()
-        self.assertEqual(exit_code,0)
+        self.assertEqual(exit_code, 0)
 
     def test_should_not_get_config_when_credentials_are_invalid(self):
         args = shlex.split(RPC_INV_CRED)
