@@ -15,6 +15,12 @@ mos flash && mos console
  mos call Door.Open
 
 ```
+### How to create RPC user: 
+```
+ mos call RPC.Add_user '{"user": "usario", "pass": "tranca"}'
+
+```
+
 ### How to disable door: 
 ```
 mos config-set door.enable="false"
