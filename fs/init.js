@@ -8,9 +8,21 @@ function add_entry_to_rpc_auth(user, pass){
     _md5(hash, raw_digest, raw_digest.length, 0);
     let hashed_digest = args.user+':admin:'+hash;
     File.write(hashed_digest+'\n', 'rpc_auth', 'a');
-    return "OK";
+}
+
+function add_user_to_rpc_acl(user){
+    let rpc_acl = JSON.parse(File.read('rpc_acl'));
+    if (rpc_acl){
+        //return rpc_acl.acl;
+        rpc_acl[0].acl = rpc_acl[0].acl + ',+'+ user;
+        //return rpc_acl;
+        File.write(JSON.stringify(rpc_acl), 'rpc_acl');
+        return "OK";
+    }
+    return "rpc_acl not found";
 }
 
 RPC.addHandler('RPC.Add_user', function(args) {
-    return add_entry_to_rpc_auth(args.user, args.pass);
+    add_entry_to_rpc_auth(args.user, args.pass);
+    return add_user_to_rpc_acl(args.user);
 });
